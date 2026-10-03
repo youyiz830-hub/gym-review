@@ -12,98 +12,117 @@ const QUESTIONS = {
     hint: '複数選択できます',
     multi: true,
     options: [
-      { value: 'diet',        label: 'ダイエット・体重を落としたい' },
-      { value: 'bodyTone',    label: '体を引き締めたい' },
-      { value: 'lackExercise',label: '運動不足を解消したい' },
-      { value: 'fitness',     label: '体力をつけたい' },
-      { value: 'health',      label: '健康のため' },
-      { value: 'stress',      label: 'ストレス発散' },
-      { value: 'habit',       label: '運動習慣をつけたい' },
-      { value: 'kickboxing',  label: 'キックボクシングをやってみたかった' },
-      { value: 'withFriend',  label: '友達と一緒に運動したかった' },
+      { value: 'diet',         label: 'ダイエット・体重を落としたい' },
+      { value: 'bodyTone',     label: '体を引き締めたい' },
+      { value: 'lackExercise', label: '運動不足の解消' },
+      { value: 'health',       label: '健康のため・体力づくり' },
+      { value: 'stress',       label: 'ストレス発散' },
+      { value: 'kickboxing',   label: 'キックボクシングに興味があった' },
+      { value: 'habit',        label: '運動習慣をつけたい' },
+      { value: 'withFriend',   label: '友達と一緒に運動したかった' },
     ],
     required: true,
   },
   q2: {
-    key: 'experience',
-    label: '運動経験について',
-    hint: '一つ選んでください',
-    multi: false,
-    options: [
-      { value: 'beginner',     label: '運動はほぼ初めて' },
-      { value: 'longAbsence',  label: 'かなり久しぶり' },
-      { value: 'sometimes',    label: 'たまに運動している' },
-      { value: 'regular',      label: '普段から運動している' },
-    ],
-    required: true,
-  },
-  q3: {
-    key: 'struggles',
-    label: 'これまで運動で困っていたことは？',
-    hint: '複数選択できます',
+    key: 'prevSituation',
+    label: '来る前はどんな状態でしたか？',
+    hint: '当てはまるものを選んでください（複数可）',
     multi: true,
     options: [
-      { value: 'aloneNoGood', label: '一人だと続かなかった' },
-      { value: 'gym24fail',   label: '24時間ジムに通ったが続かなかった' },
-      { value: 'noIdea',      label: '何をすればいいか分からなかった' },
-      { value: 'noConfidence',label: '運動が苦手・自信がなかった' },
-      { value: 'boring',      label: '筋トレだけだと飽きてしまう' },
-      { value: 'expensive',   label: 'パーソナルジムは料金が高いと感じていた' },
-      { value: 'noProblem',   label: '特に困っていなかった' },
+      { value: 'neverExercised',    label: 'ほとんど運動していなかった' },
+      { value: 'gym24fail',         label: '24時間ジムに入ったけど続かなかった' },
+      { value: 'aloneNoGood',       label: '一人だと運動が続かない' },
+      { value: 'dontKnowWhat',      label: '何をすればいいか分からなかった' },
+      { value: 'personalExpensive', label: 'パーソナルジムは費用が気になっていた' },
+      { value: 'boredSoloGym',      label: '普通の筋トレに飽きていた' },
+      { value: 'longAbsence',       label: '運動が久しぶりだった' },
+      { value: 'noPrevProblem',     label: '特に困っていなかった' },
     ],
     required: false,
     allowSkip: true,
     skipLabel: 'スキップ',
   },
-  q4: {
+  q3: {
     key: 'services',
-    label: '今日実際に体験したものは？',
+    label: '今日体験したトレーニングは？',
     hint: '複数選択できます',
     multi: true,
     options: [
-      { value: 'kickboxing',  label: 'キックボクシング' },
-      { value: 'mituchi',     label: 'ミット打ち' },
-      { value: 'hiit',        label: 'HIIT' },
-      { value: 'strength',    label: '筋力トレーニング' },
-      { value: 'semiPersonal',label: 'セミパーソナルトレーニング' },
+      { value: 'kickboxing',   label: 'キックボクシング' },
+      { value: 'mituchi',      label: 'ミット打ち' },
+      { value: 'hiit',         label: 'HIIT' },
+      { value: 'strength',     label: '筋力トレーニング' },
+      { value: 'semiPersonal', label: 'セミパーソナルトレーニング' },
     ],
     required: true,
   },
+  q4: {
+    key: 'firstFeel',
+    label: '参加する前、どんな気持ちでしたか？',
+    hint: '一番近いものを選んでください',
+    multi: false,
+    options: [
+      { value: 'nervous',        label: '少し不安・緊張していた' },
+      { value: 'worriedKeepUp',  label: 'ついていけるか心配だった' },
+      { value: 'excited',        label: '楽しみだった' },
+      { value: 'worried',        label: '初心者でもできるか心配だった' },
+      { value: 'noProblem',      label: '特に不安はなかった' },
+    ],
+    required: false,
+    allowSkip: true,
+  },
   q5: {
-    key: 'impressions',
-    label: '印象に残ったことは？',
+    key: 'howItWas',
+    label: '実際にやってみてどうでしたか？',
     hint: '複数選択できます',
     multi: true,
     options: [
-      { value: 'fun',          label: '楽しく運動できた' },
-      { value: 'sweat',        label: 'たくさん汗をかけた' },
-      { value: 'kickboxingFun',label: 'キックボクシングが楽しかった' },
-      { value: 'achievement',  label: '達成感があった' },
-      { value: 'smallGroup',   label: '少人数で参加しやすかった' },
-      { value: 'together',     label: '周りの人と一緒に頑張れた' },
-      { value: 'withFriend',   label: '友達と一緒に運動できた' },
-      { value: 'neverBored',   label: '飽きずに運動できた' },
+      { value: 'moreFunThanExpected', label: '思った以上に楽しかった' },
+      { value: 'bigSweat',            label: 'かなり汗をかけた' },
+      { value: 'timeFlew',            label: '時間があっという間だった' },
+      { value: 'couldKeepUp',         label: '初心者でもついていけた' },
+      { value: 'toughButFun',         label: 'キツいけど楽しかった' },
+      { value: 'betterThanAlone',     label: '一人でやるより頑張れた' },
+      { value: 'goodWithFriend',      label: '友達と一緒だからよかった' },
     ],
     required: false,
+    allowSkip: true,
   },
   q6: {
+    key: 'uniquePoints',
+    label: 'ここならではだと感じた点は？',
+    hint: '複数選択できます',
+    multi: true,
+    options: [
+      { value: 'smallGroupGood',   label: '少人数だから見てもらえる' },
+      { value: 'trainerNearby',    label: 'トレーナーが近くにいる' },
+      { value: 'notAlone',         label: '一人でやらなくていい' },
+      { value: 'kickboxingAvail',  label: 'キックボクシングができる' },
+      { value: 'beginnerFriendly', label: '運動初心者でも入りやすい' },
+      { value: 'notIntimidating',  label: 'パーソナルほど堅苦しくない' },
+      { value: 'easierToContinue', label: '普通のジムより続けやすそう' },
+    ],
+    required: false,
+    allowSkip: true,
+  },
+  q7: {
     key: 'trainer',
     label: 'トレーナーについて',
     hint: '複数選択できます',
     multi: true,
     options: [
-      { value: 'clear',      label: '説明が分かりやすかった' },
-      { value: 'kind',       label: '優しく教えてくれた' },
+      { value: 'kind',       label: '丁寧に教えてくれた' },
       { value: 'beginnerOk', label: '初心者でも安心できた' },
-      { value: 'custom',     label: '自分のペースに合わせてくれた' },
-      { value: 'encourage',  label: '励ましてくれた' },
+      { value: 'myPace',     label: '自分のペースに合わせてくれた' },
+      { value: 'encourage',  label: '声がけ・励ましが上手だった' },
       { value: 'form',       label: 'フォームを見てもらえた' },
       { value: 'talkable',   label: '話しやすかった' },
-      { value: 'none',       label: '特になし' },
+      { value: 'clear',      label: '説明が分かりやすかった' },
     ],
     required: false,
+    allowSkip: true,
   },
-  q7: {
+  q8: {
     key: 'afterFeel',
     label: '運動後どう感じましたか？',
     hint: '複数選択できます',
@@ -112,12 +131,13 @@ const QUESTIONS = {
       { value: 'refresh',      label: 'スッキリした' },
       { value: 'achievement',  label: '達成感があった' },
       { value: 'fun',          label: '楽しかった' },
-      { value: 'stressRelief', label: 'ストレス発散になった' },
+      { value: 'stressRelief', label: 'ストレスが発散できた' },
       { value: 'wantReturn',   label: 'また来たいと思った' },
-      { value: 'canContinue',  label: '続けられそうだと思った' },
-      { value: 'goodSweat',    label: '良い汗をかけた' },
+      { value: 'canContinue',  label: 'これなら続けられそう' },
+      { value: 'goodSweat',    label: '気持ちいい汗をかけた' },
     ],
     required: false,
+    allowSkip: true,
   },
   qArea: {
     key: 'area',
@@ -142,12 +162,12 @@ const QUESTIONS = {
 const APP = (() => {
 
   const STEPS = [
-    { id: 'welcome',   title: '',        qs: [] },
-    { id: 'step1',     title: '目的・経験', qs: ['q1', 'q2'] },
-    { id: 'step2',     title: '困りごと・体験', qs: ['q3', 'q4'] },
-    { id: 'step3',     title: '印象・感想', qs: ['q5', 'q6', 'q7'] },
+    { id: 'welcome',   title: '',             qs: [] },
+    { id: 'step1',     title: '目的・状況',     qs: ['q1', 'q2'] },
+    { id: 'step2',     title: '体験・気持ち',   qs: ['q3', 'q4', 'q5'] },
+    { id: 'step3',     title: '感想・印象',     qs: ['q6', 'q7', 'q8'] },
     { id: 'step4',     title: 'その他（任意）', qs: ['qArea', 'qFree'] },
-    { id: 'result',    title: '口コミ確認', qs: [] },
+    { id: 'result',    title: '口コミ確認',     qs: [] },
   ];
 
   const TOTAL_SURVEY_STEPS = 4; // welcome除く・result除く
@@ -155,15 +175,16 @@ const APP = (() => {
   let state = {
     currentStep: 0,
     answers: {
-      purposes:    [],
-      experience:  null,
-      struggles:   [],
-      services:    [],
-      impressions: [],
-      trainer:     [],
-      afterFeel:   [],
-      area:        null,
-      freeText:    '',
+      purposes:      [],
+      prevSituation: [],
+      services:      [],
+      firstFeel:     null,
+      howItWas:      [],
+      uniquePoints:  [],
+      trainer:       [],
+      afterFeel:     [],
+      area:          null,
+      freeText:      '',
     },
     generatedText: '',
     generatedStructKey: '',
@@ -276,16 +297,16 @@ const APP = (() => {
         <div class="questions-container">
           ${areaQ}
           <div class="question-block">
-            <p class="question-label">他に印象に残ったことがあれば教えてください</p>
-            <p class="question-hint">任意・入力しなくても口コミを作成できます</p>
+            <p class="question-label">一番印象に残ったことを一言だけ（任意）</p>
+            <p class="question-hint">任意・10〜50文字ほどで入力できます</p>
             <textarea
               id="q-freetext"
               class="free-textarea"
-              placeholder="例：駐車場が便利でした、雰囲気がよかったです など"
+              placeholder="例：声がけが丁寧でした、雰囲気がよかったです"
               rows="3"
-              maxlength="150"
+              maxlength="60"
             >${escapeHtml(state.answers.freeText || '')}</textarea>
-            <p class="char-count" id="free-char-count">${(state.answers.freeText || '').length} / 150</p>
+            <p class="char-count" id="free-char-count">${(state.answers.freeText || '').length} / 60</p>
           </div>
         </div>
         <div class="nav-row">
@@ -300,7 +321,7 @@ const APP = (() => {
     const charCount  = document.getElementById('free-char-count');
     textarea.addEventListener('input', () => {
       state.answers.freeText = textarea.value;
-      charCount.textContent  = textarea.value.length + ' / 150';
+      charCount.textContent  = textarea.value.length + ' / 60';
     });
 
     document.getElementById('btn-generate').addEventListener('click', () => generateAndShowResult());
@@ -620,8 +641,9 @@ const APP = (() => {
       state = {
         currentStep: 0,
         answers: {
-          purposes:[], experience:null, struggles:[], services:[],
-          impressions:[], trainer:[], afterFeel:[], area:null, freeText:'',
+          purposes:[], prevSituation:[], services:[], firstFeel:null,
+          howItWas:[], uniquePoints:[], trainer:[], afterFeel:[],
+          area:null, freeText:'',
         },
         generatedText: '', generatedStructKey: '',
         isGenerating: false, regenCount: 0, hasCopied: false,
