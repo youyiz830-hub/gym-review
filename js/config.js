@@ -14,7 +14,7 @@ const CONFIG = {
 
   // --- アプリ公開URL（QRコード生成に使用）---
   // GitHub Pages等で公開後に更新してください
-  APP_URL: 'https://your-github-pages.github.io/',
+  APP_URL: 'https://youyiz830-hub.github.io/gym-review/',
 
   // --- 重複防止設定 ---
   SIMILARITY_THRESHOLD: 0.40,          // Jaccard類似度閾値（これ以上で類似判定）
