@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>管理画面 | GYM脈 口コミツール</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body { background: #F5F5F5; }
+    .admin-wrap { max-width: 700px; margin: 0 auto; padding: 24px 16px 80px; }
+    h1 { font-size: 1.3rem; font-weight: 800; color: #333; margin-bottom: 8px; }
+    h2 { font-size: 1.1rem; font-weight: 700; margin: 32px 0 12px; color: #444; border-left: 4px solid #E8524A; padding-left: 10px; }
+    .card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,.08); margin-bottom: 20px; }
+    label { display: block; font-size: .9rem; font-weight: 600; margin-bottom: 6px; color: #555; }
+    input[type="url"], input[type="text"] {
+      width: 100%; border: 2px solid #E0E0E0; border-radius: 8px;
+      padding: 10px 12px; font-size: .95rem; color: #222;
+      margin-bottom: 12px;
+    }
+    #qr-canvas { display: block; margin: 16px auto 0; max-width: 240px; }
+    .qr-dl-btn { display: block; text-align: center; margin-top: 12px; }
+    .test-log { background: #1A1A2E; color: #A0F0A0; border-radius: 10px; padding: 16px;
+      font-family: 'Courier New', monospace; font-size: .82rem; line-height: 1.7;
+      max-height: 340px; overflow-y: auto; white-space: pre-wrap; }
+    .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .stat-card { background: #fff; border-radius: 10px; padding: 14px; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+    .stat-card__num { font-size: 1.8rem; font-weight: 800; color: #E8524A; }
+    .stat-card__label { font-size: .78rem; color: #777; margin-top: 2px; }
+    .stat-card--ok .stat-card__num { color: #2E7D32; }
+    .result-badge { display: inline-block; border-radius: 20px; padding: 6px 18px;
+      font-weight: 700; font-size: .95rem; margin-top: 12px; }
+    .badge--pass { background: #E8F5E9; color: #1B5E20; }
+    .badge--fail { background: #FFEBEE; color: #B71C1C; }
+    .progress-wrap { background: #E0E0E0; border-radius: 99px; overflow: hidden; height: 8px; margin: 8px 0; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, #E8524A, #FF8E53); transition: width .1s; }
+    textarea.config-area { width: 100%; border: 2px solid #E0E0E0; border-radius: 8px;
+      padding: 10px; font-size: .8rem; font-family: monospace; resize: vertical; min-height: 120px; }
+    .btn { border-radius: 99px; padding: 12px 20px; font-size: .95rem; font-weight: 700;
+      border: none; cursor: pointer; transition: opacity .15s; }
+    .btn--primary { background: linear-gradient(135deg, #E8524A, #FF8E53); color: #fff;
+      box-shadow: 0 4px 12px rgba(232,82,74,.3); }
+    .btn--primary:hover { opacity: .9; }
+    .btn--outline { background: #fff; border: 2px solid #E8524A; color: #E8524A; }
+    .btn:disabled { opacity: .5; pointer-events: none; }
+    .help-text { font-size: .82rem; color: #888; line-height: 1.6; }
+  </style>
+</head>
+<body>
+
+<header class="app-header">
+  <p class="app-header__title">GYM脈 口コミツール 管理画面</p>
+</header>
+
+<div class="admin-wrap">
+
+  <!-- QRコード生成 -->
+  <h2>📱 QRコード生成</h2>
+  <div class="card">
+    <label for="app-url-input">口コミ作成ページのURL</label>
+    <input type="url" id="app-url-input" placeholder="https://your-app.github.io/"
+      value="https://your-app.github.io/">
+    <button class="btn btn--primary" id="btn-gen-qr" style="width:100%;">QRコードを生成</button>
+    <!-- QRCodeJSはdiv要素にimg/canvasを生成する -->
+    <div id="qr-container" style="display:none; text-align:center; margin:16px 0;"></div>
+    <div id="qr-dl-area" style="display:none;">
+      <a id="qr-dl-link" class="btn btn--outline qr-dl-btn" download="gym_myaku_qr.png">
+        ⬇ QRコード画像をダウンロード
+      </a>
+      <p class="help-text" style="text-align:center; margin-top:8px;">
+        店頭POP・受付などに印刷してご使用ください
+      </p>
+    </div>
+  </div>
+
+  <!-- Firebase設定ガイド -->
+  <h2>🔥 Firebase 設定ガイド</h2>
+  <div class="card">
+    <p class="help-text">
+      クロスデバイスの重複防止には <strong>Firebase Firestore（無料）</strong> が必要です。<br>
+      以下の手順で設定してください：
+    </p>
+    <ol class="help-text" style="margin: 10px 0 0 18px; line-height: 2;">
+      <li><a href="https://console.firebase.google.com/" target="_blank" rel="noopener">console.firebase.google.com</a> でプロジェクト作成</li>
+      <li>「Firestore Database」→「本番環境で開始」→ リージョン: <strong>asia-northeast1</strong></li>
+      <li>「プロジェクト設定」→「アプリ」→ Webアプリを追加 → SDK設定をコピー</li>
+      <li><strong>js/config.js</strong> の <code>FIREBASE</code> セクションに貼り付け</li>
+      <li><strong>index.html</strong> の Firebase SDK コメントアウトを解除</li>
+    </ol>
+    <p class="help-text" style="margin-top: 10px;">
+      ※ 無料枠（Sparkプラン）：読み取り50,000回/日・書き込み20,000回/日・1GB。<br>
+      ジム規模では無期限で無料枠内に収まります。
+    </p>
+    <h3 style="font-size:.9rem; font-weight:700; margin:14px 0 6px; color:#555;">Firestoreセキュリティルール（コピーして設定）</h3>
+    <textarea class="config-area" readonly>rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /review_hashes/{docId} {
+      allow read:  if true;
+      allow write: if request.resource.data.keys()
+                      .hasOnly(['hashFull','hashNorm','trigramSig','structKey','createdAt','serverTs'])
+                   && request.resource.data.hashFull is string
+                   && request.resource.data.hashFull.size() == 64;
+    }
+  }
+}</textarea>
+  </div>
+
+  <!-- 1000件重複テスト -->
+  <h2>🧪 1000件重複耐久テスト</h2>
+  <div class="card">
+    <p class="help-text" style="margin-bottom:12px;">
+      ランダムな回答セットで1000件の口コミを自動生成し、完全一致・類似文章の件数を検証します。<br>
+      完全一致0件・類似排除率が適切であれば合格です。
+    </p>
+    <div class="progress-wrap" style="display:none;" id="test-progress-wrap">
+      <div class="progress-fill" id="test-progress-bar" style="width:0%"></div>
+    </div>
+    <p id="test-progress-label" style="font-size:.82rem; color:#888; margin-bottom:10px;"></p>
+    <button class="btn btn--primary" id="btn-run-test" style="width:100%; margin-bottom:16px;">
+      テスト開始 (1000件)
+    </button>
+
+    <div id="test-stats" style="display:none;">
+      <div class="stat-grid">
+        <div class="stat-card stat-card--ok">
+          <div class="stat-card__num" id="stat-unique">-</div>
+          <div class="stat-card__label">ユニーク口コミ数</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__num" id="stat-exact">-</div>
+          <div class="stat-card__label">完全一致（排除）</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__num" id="stat-similar">-</div>
+          <div class="stat-card__label">類似排除</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__num" id="stat-regen">-</div>
+          <div class="stat-card__label">平均再生成回数</div>
+        </div>
+      </div>
+      <div id="test-badge"></div>
+    </div>
+
+    <h3 style="font-size:.9rem; font-weight:700; margin:16px 0 6px; color:#555;">ログ</h3>
+    <div class="test-log" id="test-log">テスト開始ボタンを押してください...</div>
+  </div>
+
+  <!-- サンプル口コミ確認 -->
+  <h2>📝 サンプル口コミ確認（20件）</h2>
+  <div class="card">
+    <button class="btn btn--outline" id="btn-gen-samples" style="width:100%; margin-bottom:16px;">
+      サンプル20件を生成して確認
+    </button>
+    <div id="sample-list" style="display:flex; flex-direction:column; gap:14px;"></div>
+  </div>
+
+  <p class="admin-footer">GYM脈 口コミ作成サポートツール 管理画面</p>
+</div>
+
+<!-- QRコードライブラリ（CDN） -->
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+<!-- アプリ本体 -->
+<script src="js/config.js"></script>
+<script src="js/generator.js"></script>
+<script src="js/duplicate.js"></script>
+<script src="js/firebase-service.js"></script>
+
+<script>
+// ======================================================
+// QRコード生成
+// ======================================================
+document.getElementById('btn-gen-qr').addEventListener('click', () => {
+  const url = document.getElementById('app-url-input').value.trim();
+
+  if (!url) { alert('URLを入力してください'); return; }
+
+  const container = document.getElementById('qr-container');
+  const dlArea    = document.getElementById('qr-dl-area');
+
+  // 既存QRをクリア
+  container.innerHTML = '';
+  container.style.display = 'none';
+  dlArea.style.display = 'none';
+
+  // QRCodeJSはdiv要素にimgを生成する
+  new QRCode(container, {
+    text:         url,
+    width:        240,
+    height:       240,
+    colorDark:    '#1A1A1A',
+    colorLight:   '#FFFFFF',
+    correctLevel: QRCode.CorrectLevel.H,
+  });
+
+  // 描画完了を待ってから表示
+  setTimeout(() => {
+    const imgEl = container.querySelector('img');
+    if (imgEl) {
+      imgEl.style.borderRadius = '8px';
+      imgEl.style.maxWidth = '240px';
+      // imgのsrcをダウンロードリンクに設定
+      imgEl.onload = () => {
+        document.getElementById('qr-dl-link').href = imgEl.src;
+      };
+      if (imgEl.complete) {
+        document.getElementById('qr-dl-link').href = imgEl.src;
+      }
+    }
+    container.style.display = 'block';
+    dlArea.style.display    = 'block';
+  }, 300);
+});
+
+// ======================================================
+// 1000件重複耐久テスト
+// ======================================================
+const SCENARIO_POOL = [
+  // ダイエット女性・初心者
+  { purposes:['diet','bodyTone'], experience:'beginner', struggles:['noIdea','noConfidence'],
+    services:['kickboxing','semiPersonal'], impressions:['fun','smallGroup','sweat'],
+    trainer:['kind','beginnerOk','encourage'], afterFeel:['refresh','fun','canContinue'],
+    area:'tenjin', freeText:'' },
+  // 24時間ジム挫折
+  { purposes:['habit','lackExercise'], experience:'longAbsence', struggles:['gym24fail','aloneNoGood'],
+    services:['hiit','strength'], impressions:['achievement','together'],
+    trainer:['clear','custom','form'], afterFeel:['achievement','refresh','wantReturn'],
+    area:'akasaka', freeText:'' },
+  // キックボクシング目的
+  { purposes:['kickboxing','stress'], experience:'sometimes', struggles:['boring'],
+    services:['kickboxing','mituchi','hiit'], impressions:['kickboxingFun','sweat','neverBored'],
+    trainer:['kind','encourage','talkable'], afterFeel:['stressRelief','fun','goodSweat'],
+    area:'tenjin', freeText:'' },
+  // 友達と参加
+  { purposes:['withFriend','diet'], experience:'longAbsence', struggles:['aloneNoGood'],
+    services:['kickboxing','mituchi'], impressions:['withFriend','fun','smallGroup'],
+    trainer:['kind','beginnerOk'], afterFeel:['fun','refresh','wantReturn'],
+    area:'noArea', freeText:'' },
+  // パーソナル高くて悩んでた
+  { purposes:['diet','bodyTone'], experience:'beginner', struggles:['expensive','noIdea'],
+    services:['semiPersonal','strength'], impressions:['smallGroup','achievement'],
+    trainer:['clear','custom','form','beginnerOk'], afterFeel:['achievement','canContinue'],
+    area:'fukuoka', freeText:'' },
+  // ストレス発散
+  { purposes:['stress','habit'], experience:'sometimes', struggles:['boring'],
+    services:['kickboxing','mituchi','hiit'], impressions:['kickboxingFun','sweat','fun'],
+    trainer:['encourage','talkable'], afterFeel:['stressRelief','refresh','fun'],
+    area:'noArea', freeText:'' },
+  // 健康目的・普段から運動
+  { purposes:['health','fitness'], experience:'regular', struggles:['noProblem'],
+    services:['hiit','strength','semiPersonal'], impressions:['achievement','neverBored'],
+    trainer:['clear','form'], afterFeel:['achievement','refresh'],
+    area:'maizuru', freeText:'' },
+  // 運動習慣・初めて
+  { purposes:['habit','lackExercise'], experience:'beginner', struggles:['noIdea','noConfidence','aloneNoGood'],
+    services:['semiPersonal','kickboxing'], impressions:['fun','smallGroup','together'],
+    trainer:['kind','beginnerOk','encourage','talkable'], afterFeel:['fun','refresh','canContinue','wantReturn'],
+    area:'tenjin', freeText:'' },
+];
+
+document.getElementById('btn-run-test').addEventListener('click', async () => {
+  const btn     = document.getElementById('btn-run-test');
+  const logEl   = document.getElementById('test-log');
+  const statsEl = document.getElementById('test-stats');
+  const pgWrap  = document.getElementById('test-progress-wrap');
+  const pgBar   = document.getElementById('test-progress-bar');
+  const pgLabel = document.getElementById('test-progress-label');
+
+  btn.disabled = true;
+  btn.textContent = '実行中...';
+  logEl.textContent = '';
+  statsEl.style.display = 'none';
+  pgWrap.style.display = 'block';
+  pgLabel.textContent  = '準備中...';
+
+  // 1000件のランダム回答セット生成
+  const answersArr = [];
+  for (let i = 0; i < 1000; i++) {
+    const base = SCENARIO_POOL[i % SCENARIO_POOL.length];
+    // 少しランダム性を加えてバリエーションを作る
+    const variation = JSON.parse(JSON.stringify(base));
+    // ランダムに1〜2項目を除外
+    ['impressions','trainer','afterFeel'].forEach(key => {
+      if (variation[key].length > 2 && Math.random() > 0.6) {
+        const idx = Math.floor(Math.random() * variation[key].length);
+        variation[key].splice(idx, 1);
+      }
+    });
+    // エリアランダム
+    if (Math.random() > 0.5) {
+      variation.area = ['tenjin','akasaka','maizuru','noArea','fukuoka'][Math.floor(Math.random()*5)];
+    }
+    answersArr.push(variation);
+  }
+
+  const results = await DUPLICATE_CHECKER.runBulkTest(
+    REVIEW_GENERATOR.generate,
+    answersArr,
+    (idx, partial) => {
+      const pct = Math.round(idx / 1000 * 100);
+      pgBar.style.width = pct + '%';
+      pgLabel.textContent = `${idx}/1000 件処理中...`;
+      logEl.textContent += `[${idx}件] ユニーク:${partial.unique} / 完全一致排除:${partial.exactDuplicates} / 類似排除:${partial.similarDuplicates}\n`;
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+  );
+
+  pgBar.style.width = '100%';
+  pgLabel.textContent = '完了';
+
+  // 結果表示
+  document.getElementById('stat-unique').textContent  = results.unique;
+  document.getElementById('stat-exact').textContent   = results.exactDuplicates;
+  document.getElementById('stat-similar').textContent = results.similarDuplicates + results.normDuplicates;
+  document.getElementById('stat-regen').textContent   = results.avgRegenAttempts.toFixed(2);
+  statsEl.style.display = 'block';
+
+  const pass      = results.exactDuplicates === 0;
+  const badgeEl   = document.getElementById('test-badge');
+  badgeEl.innerHTML = pass
+    ? `<span class="result-badge badge--pass">✅ テスト合格：完全一致0件</span>`
+    : `<span class="result-badge badge--fail">❌ 要改善：完全一致 ${results.exactDuplicates} 件</span>`;
+
+  logEl.textContent += `\n====== テスト完了 ======\n`;
+  logEl.textContent += `生成総数:           ${results.total}\n`;
+  logEl.textContent += `ユニーク:           ${results.unique}\n`;
+  logEl.textContent += `完全一致排除:       ${results.exactDuplicates}\n`;
+  logEl.textContent += `正規化一致排除:     ${results.normDuplicates}\n`;
+  logEl.textContent += `類似排除:           ${results.similarDuplicates}\n`;
+  logEl.textContent += `構造上限排除:       ${results.structDuplicates}\n`;
+  logEl.textContent += `平均再生成回数:     ${results.avgRegenAttempts.toFixed(2)}\n`;
+  logEl.textContent += `結果:               ${pass ? '✅ 合格' : '❌ 要改善'}\n`;
+  logEl.scrollTop = logEl.scrollHeight;
+
+  btn.disabled    = false;
+  btn.textContent = 'テスト開始 (1000件)';
+});
+
+// ======================================================
+// サンプル口コミ20件生成
+// ======================================================
+const SAMPLE_SCENARIOS = [
+  { label: 'ダイエット・初心者', purposes:['diet'], experience:'beginner', struggles:['noIdea'], services:['kickboxing','semiPersonal'], impressions:['fun','smallGroup'], trainer:['kind','beginnerOk'], afterFeel:['refresh','canContinue'], area:'tenjin', freeText:'' },
+  { label: '24時間ジム挫折', purposes:['habit'], experience:'longAbsence', struggles:['gym24fail','aloneNoGood'], services:['hiit','strength'], impressions:['achievement','together'], trainer:['custom','encourage'], afterFeel:['achievement','wantReturn'], area:'akasaka', freeText:'' },
+  { label: 'キックボクシング目的', purposes:['kickboxing'], experience:'sometimes', struggles:['boring'], services:['kickboxing','mituchi'], impressions:['kickboxingFun','sweat'], trainer:['encourage','talkable'], afterFeel:['stressRelief','fun'], area:'tenjin', freeText:'' },
+  { label: '友達と参加', purposes:['withFriend','diet'], experience:'longAbsence', struggles:['aloneNoGood'], services:['kickboxing','mituchi'], impressions:['withFriend','fun'], trainer:['kind'], afterFeel:['fun','refresh'], area:'noArea', freeText:'' },
+  { label: 'パーソナル高いと感じてた', purposes:['diet'], experience:'beginner', struggles:['expensive'], services:['semiPersonal'], impressions:['smallGroup','achievement'], trainer:['clear','form'], afterFeel:['achievement','canContinue'], area:'fukuoka', freeText:'' },
+  { label: 'ストレス発散', purposes:['stress'], experience:'sometimes', struggles:['boring'], services:['kickboxing','hiit'], impressions:['kickboxingFun','sweat'], trainer:['encourage'], afterFeel:['stressRelief','refresh'], area:'noArea', freeText:'' },
+  { label: '運動初心者・体引き締め', purposes:['bodyTone'], experience:'beginner', struggles:['noConfidence','noIdea'], services:['semiPersonal','strength'], impressions:['smallGroup'], trainer:['kind','beginnerOk','custom'], afterFeel:['refresh','canContinue'], area:'tenjin', freeText:'' },
+  { label: '一人だと続かない', purposes:['habit'], experience:'longAbsence', struggles:['aloneNoGood'], services:['hiit','kickboxing'], impressions:['together','fun'], trainer:['encourage','talkable'], afterFeel:['fun','wantReturn'], area:'noArea', freeText:'' },
+  { label: '少人数制が良かった', purposes:['diet','lackExercise'], experience:'beginner', struggles:['expensive','noIdea'], services:['semiPersonal','hiit'], impressions:['smallGroup','achievement'], trainer:['clear','form','beginnerOk'], afterFeel:['achievement','refresh'], area:'tenjin', freeText:'' },
+  { label: 'ミット打ち体験', purposes:['kickboxing','stress'], experience:'sometimes', struggles:[], services:['mituchi','kickboxing'], impressions:['kickboxingFun','sweat','neverBored'], trainer:['encourage','kind'], afterFeel:['stressRelief','fun','goodSweat'], area:'noArea', freeText:'' },
+  { label: '運動習慣つけたい', purposes:['habit','health'], experience:'longAbsence', struggles:['aloneNoGood','noIdea'], services:['strength','hiit'], impressions:['achievement','neverBored'], trainer:['clear','custom'], afterFeel:['achievement','canContinue'], area:'akasaka', freeText:'' },
+  { label: 'HIIT体験', purposes:['diet','fitness'], experience:'sometimes', struggles:[], services:['hiit'], impressions:['achievement','sweat'], trainer:['encourage','form'], afterFeel:['achievement','refresh','goodSweat'], area:'tenjin', freeText:'' },
+  { label: '体力づくり・普段から運動', purposes:['fitness','health'], experience:'regular', struggles:['noProblem'], services:['hiit','strength'], impressions:['achievement','neverBored'], trainer:['clear','form'], afterFeel:['achievement','refresh'], area:'maizuru', freeText:'' },
+  { label: '楽しく運動したい女性', purposes:['stress','habit'], experience:'beginner', struggles:['boring','noConfidence'], services:['kickboxing','mituchi','hiit'], impressions:['fun','kickboxingFun','sweat'], trainer:['kind','encourage','talkable'], afterFeel:['fun','stressRelief','canContinue'], area:'tenjin', freeText:'' },
+  { label: 'セミパーソナル体験', purposes:['diet'], experience:'longAbsence', struggles:['expensive','aloneNoGood'], services:['semiPersonal'], impressions:['smallGroup','achievement'], trainer:['custom','clear','form'], afterFeel:['canContinue','refresh'], area:'noArea', freeText:'' },
+  { label: '友達誘ってキックボクシング', purposes:['withFriend','kickboxing'], experience:'beginner', struggles:['noConfidence'], services:['kickboxing','mituchi'], impressions:['withFriend','kickboxingFun','fun'], trainer:['kind','beginnerOk','encourage'], afterFeel:['fun','stressRelief','wantReturn'], area:'tenjin', freeText:'' },
+  { label: '自由記述あり', purposes:['diet'], experience:'beginner', struggles:['noIdea'], services:['semiPersonal','kickboxing'], impressions:['smallGroup','fun'], trainer:['kind','beginnerOk'], afterFeel:['refresh','canContinue'], area:'noArea', freeText:'スタジオがきれいで通いやすかったです。' },
+  { label: 'シンプル・短文傾向', purposes:['stress'], experience:'sometimes', struggles:[], services:['kickboxing'], impressions:['fun'], trainer:['kind'], afterFeel:['refresh'], area:'noArea', freeText:'' },
+  { label: '運動不足解消', purposes:['lackExercise','health'], experience:'longAbsence', struggles:['noIdea'], services:['hiit','strength'], impressions:['achievement','sweat'], trainer:['clear','form'], afterFeel:['refresh','achievement'], area:'fukuoka', freeText:'' },
+  { label: '継続意欲強い', purposes:['diet','habit'], experience:'beginner', struggles:['aloneNoGood','gym24fail','expensive'], services:['semiPersonal','kickboxing','hiit'], impressions:['fun','smallGroup','achievement','together'], trainer:['kind','beginnerOk','encourage','custom'], afterFeel:['refresh','fun','canContinue','wantReturn'], area:'tenjin', freeText:'' },
+];
+
+document.getElementById('btn-gen-samples').addEventListener('click', async () => {
+  const listEl = document.getElementById('sample-list');
+  listEl.innerHTML = '<p style="color:#888; font-size:.9rem;">生成中...</p>';
+
+  const items = [];
+  for (let i = 0; i < SAMPLE_SCENARIOS.length; i++) {
+    const sc     = SAMPLE_SCENARIOS[i];
+    const seed   = i * 1234567 + 99;
+    const result = REVIEW_GENERATOR.generate(sc, seed);
+    items.push({ label: sc.label, ...result });
+  }
+
+  listEl.innerHTML = items.map((item, idx) => `
+    <div style="background:#F9F9F9; border:1px solid #E8E0DD; border-radius:10px; padding:14px;">
+      <p style="font-size:.78rem; color:#888; margin-bottom:4px;">#${idx+1} ${item.label}（${item.length}・構成${item.patternId}）</p>
+      <p style="font-size:.92rem; line-height:1.75; color:#222;">${item.text}</p>
+      <p style="font-size:.75rem; color:#AAA; margin-top:6px;">${item.text.length}文字</p>
+    </div>
+  `).join('');
+});
+</script>
+
+</body>
+</html>

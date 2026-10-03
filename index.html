@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="theme-color" content="#E8524A">
+  <meta name="robots" content="noindex, nofollow">
+  <title>口コミ作成サポート | セミパーソナルジム GYM脈</title>
+
+  <!-- OGP（SNSシェア用） -->
+  <meta property="og:title" content="口コミ作成サポート | GYM脈">
+  <meta property="og:description" content="体験を選ぶだけで口コミの下書きが作れます。約30〜60秒で完了。">
+  <meta name="twitter:card" content="summary">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ヘッダー -->
+  <header class="app-header" role="banner">
+    <p class="app-header__title">セミパーソナルジム GYM脈</p>
+  </header>
+
+  <!-- プログレスバー -->
+  <div id="progress-wrapper" style="display:none;">
+    <div class="progress-label-row">
+      <span id="progress-label">STEP 1 / 4</span>
+    </div>
+    <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" id="progress-bar-wrapper">
+      <div id="progress-bar"></div>
+    </div>
+  </div>
+
+  <!-- メインコンテンツ -->
+  <main id="app" role="main" aria-live="polite">
+    <!-- JS で描画されます -->
+    <div class="screen screen--generating" style="min-height:60vh; display:flex; align-items:center; justify-content:center;">
+      <div class="generating-spinner" aria-hidden="true"></div>
+    </div>
+  </main>
+
+  <!-- Firebase SDK (compat版 - クレカ不要の無料プランで動作) -->
+  <!-- Firebase設定後にコメントアウトを解除してください -->
+  <!--
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  -->
+
+  <!-- Firebase未設定時のダミー（設定後は削除） -->
+  <script>
+    // Firebase SDK ロード前の仮オブジェクト（未設定状態でも動作させるため）
+    if (typeof firebase === 'undefined') {
+      window.firebase = {
+        initializeApp: () => null,
+        firestore: () => ({
+          collection: () => ({
+            get: () => Promise.reject(new Error('Firebase not configured')),
+            add: () => Promise.reject(new Error('Firebase not configured')),
+          }),
+          FieldValue: { serverTimestamp: () => null },
+        }),
+        apps: [],
+      };
+    }
+  </script>
+
+  <!-- アプリ本体 -->
+  <script src="js/config.js"></script>
+  <script src="js/generator.js"></script>
+  <script src="js/duplicate.js"></script>
+  <script src="js/firebase-service.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
