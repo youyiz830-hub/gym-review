@@ -37,13 +37,13 @@ const QUESTIONS = {
   },
   q3: {
     key: 'services',
-    label: '今日楽しかったトレーニングは？',
+    label: '今日体験して楽しかったトレーニングは？',
     hint: '複数選択できます',
     multi: true,
     required: true,
     options: [
       { value: 'kickboxing',   label: 'キックボクシング' },
-      { value: 'hiit',         label: 'HIIT（高強度インターバル）' },
+      { value: 'hiit',         label: 'HIIT（脂肪燃焼トレーニング）' },
       { value: 'strength',     label: '筋力トレーニング' },
       { value: 'semiPersonal', label: 'セミパーソナルトレーニング' },
     ],
